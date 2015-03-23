@@ -1,8 +1,5 @@
-import scala.collection.mutable.Set
+import scala.collection.immutable.Set
 
-/**
- * Created by mgo12 on 18/03/2015.
- */
 object ProjectEuler extends App {
 
   lazy val fibs: Stream[BigInt] = BigInt(0) #:: BigInt(1) #:: fibs zip fibs.tail map (e => e._1 + e._2)
@@ -14,9 +11,9 @@ object ProjectEuler extends App {
     fib(1, 1)
   }
 
-  def primes(n: BigInt): Set[BigInt] = {
+  def primes(n: BigInt): scala.collection.mutable.Set[BigInt] = {
     val limit = BigInt(math.sqrt(n.toDouble).toLong)
-    val eratostenesSieve: Set[BigInt] = Set.empty ++ (BigInt(2) to limit)
+    val eratostenesSieve: scala.collection.mutable.Set[BigInt] = scala.collection.mutable.Set.empty ++ (BigInt(2) to limit)
 
     def filterNonPrimes(primeCandidate: BigInt): Unit = {
       if (eratostenesSieve contains primeCandidate) {
@@ -30,6 +27,12 @@ object ProjectEuler extends App {
 
   }
 
+  def eratostenesSieve(n: BigInt): Set[BigInt] = {
+    val set = Set.empty ++ (BigInt(2) to n)
+    val dividers = BigInt(2) to BigInt(math.sqrt(n.toDouble).toLong)
+    dividers.foldLeft(set)((setRefined, d) => setRefined filterNot(e => e > d && e % d == 0))
+  }
+
   def problem1(n: Int): Int = {
     (1 until n) filter (e => e % 3 == 0 || e % 5 == 0) sum
   }
@@ -39,8 +42,10 @@ object ProjectEuler extends App {
   }
 
   def problem3(n: BigInt): BigInt = {
-    primes(n) filter (e => (n % e == 0)) max
+    primes(n) filter (e => n % e == 0) max
   }
+
+
 
   def problem4(range : Seq[Int]) : Int = {
     def isPalindrome(n : Int) : Boolean = {
@@ -51,7 +56,7 @@ object ProjectEuler extends App {
     val palindroms = for {
       x <- range
       y <- range
-      if(isPalindrome(x*y))
+      if isPalindrome(x*y)
     } yield x*y
 
     palindroms max
@@ -64,8 +69,8 @@ object ProjectEuler extends App {
     //println(primes(10))
     //println(problem3(10))
     //println(problem3(13195))
-    //println(problem3(600851475143L))
-    println(problem4(100 to 999))
+    println(problem3(600851475143L))
+    //println(problem4(100 to 999))
 
   }
 
