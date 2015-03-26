@@ -1,4 +1,4 @@
-import scala.collection.immutable.Set
+
 
 object ProjectEuler extends App {
 
@@ -27,10 +27,14 @@ object ProjectEuler extends App {
 
   }
 
-  def eratostenesSieve(n: BigInt): Set[BigInt] = {
-    val set = Set.empty ++ (BigInt(2) to n)
+  def eratostenesSieve(n: BigInt): List[BigInt] = {
+    val set = List.empty ++ (BigInt(2) to n)
     val dividers = BigInt(2) to BigInt(math.sqrt(n.toDouble).toLong)
-    dividers.foldLeft(set)((setRefined, d) => setRefined filterNot(e => e > d && e % d == 0))
+    dividers.foldLeft(set)((setRefined, d) => setRefined filterNot (e => e > d && e % d == 0))
+  }
+
+  def gcd(a: BigInt, b: BigInt): BigInt = {
+    if (b == 0) a else gcd(b, a % b)
   }
 
   def problem1(n: Int): Int = {
@@ -45,10 +49,8 @@ object ProjectEuler extends App {
     primes(n) filter (e => n % e == 0) max
   }
 
-
-
-  def problem4(range : Seq[Int]) : Int = {
-    def isPalindrome(n : Int) : Boolean = {
+  def problem4(range: Seq[Int]): Int = {
+    def isPalindrome(n: Int): Boolean = {
       val nToString = n.toString
       nToString == nToString.reverse
     }
@@ -56,12 +58,34 @@ object ProjectEuler extends App {
     val palindroms = for {
       x <- range
       y <- range
-      if isPalindrome(x*y)
-    } yield x*y
+      if isPalindrome(x * y)
+    } yield x * y
 
     palindroms max
 
   }
+
+  def problem5(s: Seq[Int]): BigInt = {
+    s.foldRight(BigInt(1))((a, b) => a * b / gcd(a, b))
+  }
+
+  def problem6(s: Seq[Int]): BigInt = {
+    val sum = s.sum
+    sum * sum - s.foldLeft(0)((a, b) => a + b * b)
+  }
+
+  def problem7(n: Int): BigInt = {
+    def guess(estimatedSize: Int): List[BigInt] = {
+      val s = eratostenesSieve(estimatedSize)
+      if (s.size >= n) {
+        s
+      } else {
+        guess(estimatedSize * 2)
+      }
+    }
+    guess(n).sorted.drop(n - 1).head
+  }
+
 
   override def main(args: Array[String]) {
     //   println(problem2(4000000))
@@ -69,9 +93,11 @@ object ProjectEuler extends App {
     //println(primes(10))
     //println(problem3(10))
     //println(problem3(13195))
-    println(problem3(600851475143L))
+    //println(problem3(600851475143L))
     //println(problem4(100 to 999))
-
+//    println(problem6(1 to 100))
+    //println(problem7(10001))
+    //    print(eratostenesSieve(10001) max)
   }
 
 
